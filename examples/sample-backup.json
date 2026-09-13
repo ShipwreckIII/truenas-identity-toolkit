@@ -1,0 +1,93 @@
+{
+  "_comment": "Annotated example only - every value below is fake. This exact _comment field is not part of the real schema and is stripped by nothing; it is simply an extra field the toolkit ignores. See docs/FIELD-REFERENCE.md for the authoritative schema.",
+
+  "schema": 1,
+  "generated_at": "2026-01-15T09:00:00Z",
+
+  "source": "config-db",
+  "_source_comment": "\"api\" (from backup-api.sh, no hashes) or \"config-db\" (from backup-db.sh, hashes present)",
+
+  "source_host": "freenas-v1.db",
+  "source_version": "unknown",
+  "_source_version_comment": "backup-api.sh fills this from midclt system.info (e.g. 'TrueNAS-SCALE-25.04.1'); backup-db.sh cannot determine it from the config DB alone, hence 'unknown'",
+
+  "tool_version": "0.1.0",
+  "contains_hashes": true,
+
+  "hash_warning": "This file contains password hashes (unixhash/smbhash). Restrict access; permissions are set to 0600.",
+  "_hash_warning_comment": "Only present when contains_hashes is true. The real file also gets chmod 600 - this example does not, since it contains no real hashes.",
+
+  "groups": [
+    {
+      "id": 2,
+      "gid": 3001,
+      "name": "engineering",
+      "sudo_commands": [],
+      "sudo_commands_nopasswd": [],
+      "smb": false,
+      "users": [2, 3]
+    },
+    {
+      "id": 4,
+      "gid": 3002,
+      "name": "backup-operators",
+      "sudo_commands": ["/usr/sbin/zfs snapshot *"],
+      "sudo_commands_nopasswd": [],
+      "smb": true,
+      "users": [3]
+    }
+  ],
+
+  "users": [
+    {
+      "id": 2,
+      "uid": 3001,
+      "username": "ahmad",
+      "full_name": "Ahmad A",
+      "email": "ahmad@example.invalid",
+      "group_gid": 3001,
+      "group_name": "engineering",
+      "groups": [3002],
+      "home": "/mnt/tank/home/ahmad",
+      "shell": "/usr/bin/bash",
+      "locked": false,
+      "password_disabled": false,
+      "smb": true,
+      "sudo_commands": ["ALL"],
+      "sudo_commands_nopasswd": [],
+      "sshpubkey": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIexampleexampleexampleexampleexampleexamp fake@example",
+      "immutable": false,
+      "twofactor_auth_configured": false,
+      "attributes": {},
+      "hashes": {
+        "unixhash": "$6$fakesaltfakesalt$fakefakefakefakefakefakefakefakefakefakefakefakefakefakefakefakefakefakefakefakefakefakefakefake0",
+        "smbhash": "ahmad:3001:AAAAAAAAAAAAAAAAAAAAAAAAAAAA:BBBBBBBBBBBBBBBBBBBBBBBBBBBB:[U          ]:LCT-00000000:"
+      }
+    },
+    {
+      "id": 3,
+      "uid": 3002,
+      "username": "nas-backup-svc",
+      "full_name": "Backup Service Account",
+      "email": null,
+      "group_gid": 3001,
+      "group_name": "engineering",
+      "groups": [3002],
+      "home": "/mnt/tank/home/nas-backup-svc",
+      "shell": "/usr/sbin/nologin",
+      "locked": true,
+      "password_disabled": true,
+      "smb": false,
+      "sudo_commands": [],
+      "sudo_commands_nopasswd": ["/usr/sbin/zfs snapshot *"],
+      "sshpubkey": null,
+      "immutable": false,
+      "twofactor_auth_configured": false,
+      "attributes": {},
+      "hashes": {
+        "unixhash": "*",
+        "smbhash": ""
+      }
+    }
+  ]
+}

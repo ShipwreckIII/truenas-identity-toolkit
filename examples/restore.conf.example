@@ -1,0 +1,48 @@
+# restore.conf.example - policy defaults for bin/restore.sh
+#
+# Copy this file to restore.conf (or anywhere else) and pass it with
+# --config /path/to/restore.conf. Every value here can still be overridden
+# by an explicit CLI flag - CLI flags always win over the config file,
+# regardless of the order they appear on the command line.
+#
+# This file is parsed by a restricted KEY=VALUE reader, NOT sourced as
+# bash - unknown keys are warned about and ignored, and there is no way
+# for a config file to execute code. Blank lines and '#' comments are
+# ignored. Do not quote values; everything after '=' up to end of line
+# (minus a trailing comment) is taken literally.
+
+# --home-strategy: one of skip | remap | preserve | prompt
+#   skip     - do not set a home path; let TrueNAS assign the default.
+#              This is the recommended default: pool/dataset layouts
+#              rarely match exactly between source and target systems.
+#   remap    - apply the HOME_REMAP rules below; falls back to skip for
+#              any path that matches no rule.
+#   preserve - use the backup's home path unchanged (warns if the
+#              parent directory doesn't exist on the target).
+#   prompt   - ask interactively for each user (not usable with --yes
+#              or in a non-interactive shell; falls back to skip there).
+HOME_STRATEGY=skip
+
+# HOME_REMAP: one FROM=TO prefix rule per line; repeat the key for
+# multiple rules. Only used when HOME_STRATEGY=remap. The first rule
+# whose FROM is a prefix of the backup's home path wins.
+#
+# Example: a backup taken from a pool named "tank" being restored onto a
+# new system where the equivalent pool is named "newpool":
+#HOME_REMAP=/mnt/tank/home=/mnt/newpool/home
+#HOME_REMAP=/mnt/tank/users=/mnt/newpool/users
+
+# --shell-fallback: shell to substitute when a user's recorded shell does
+# not exist on the target (checked live over SSH during restore).
+SHELL_FALLBACK=/usr/bin/bash
+
+# --yes-to-all-conflicts: skip | overwrite (leave unset to be prompted
+# per-conflict, with the option to choose "apply to all" interactively
+# partway through). Setting this here pre-seeds that "apply to all"
+# choice for the whole run, exactly as if you had answered yes to the
+# very first conflict prompt.
+#YES_TO_ALL_CONFLICTS=skip
+
+# Connection defaults (still overridable by --target-user / --target-port):
+#TARGET_USER=root
+#TARGET_PORT=22
