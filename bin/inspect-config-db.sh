@@ -51,7 +51,12 @@ parse_args() {
     while [[ $# -gt 0 ]]; do
         case "$1" in
             --input) INPUT_PATH="${2:?--input requires a value}"; shift 2 ;;
-            --no-color) NO_COLOR=1; init_colors; shift ;;
+            --no-color)
+                # shellcheck disable=SC2034 # read by lib/common.sh, not here
+                NO_COLOR=1
+                init_colors
+                shift
+                ;;
             -h|--help) usage; exit "$EXIT_OK" ;;
             -v|--version) print_version "$PROG_NAME" ;;
             *) log_error "Unknown argument: $1"; usage; exit "$EXIT_INVALID_ARGS" ;;

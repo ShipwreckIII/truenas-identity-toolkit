@@ -32,12 +32,19 @@ TOOLKIT_VERSION="0.1.0"
 NO_COLOR="${NO_COLOR:-0}"
 ASSUME_YES="${ASSUME_YES:-0}"
 
-# Exit code convention used across every script in this toolkit.
+# Exit code convention used across every script in this toolkit. Several
+# of these are only ever referenced from the bin/*.sh scripts that source
+# this file, not from within common.sh itself, so shellcheck cannot see
+# the usage when checking this file in isolation.
 readonly EXIT_OK=0
 readonly EXIT_GENERAL_ERROR=1
+# shellcheck disable=SC2034
 readonly EXIT_INVALID_ARGS=2
+# shellcheck disable=SC2034
 readonly EXIT_CONNECTIVITY_FAILURE=3
+# shellcheck disable=SC2034
 readonly EXIT_VALIDATION_FAILURE=4
+# shellcheck disable=SC2034
 readonly EXIT_PARTIAL_SUCCESS=5
 
 # ---------------------------------------------------------------------------
@@ -52,6 +59,7 @@ init_colors() {
         COLOR_GREEN=""
         COLOR_YELLOW=""
         COLOR_BLUE=""
+        # shellcheck disable=SC2034 # used by bin/*.sh section headers, not here
         COLOR_BOLD=""
         COLOR_RESET=""
     else
@@ -59,6 +67,7 @@ init_colors() {
         COLOR_GREEN=$'\033[0;32m'
         COLOR_YELLOW=$'\033[0;33m'
         COLOR_BLUE=$'\033[0;34m'
+        # shellcheck disable=SC2034 # used by bin/*.sh section headers, not here
         COLOR_BOLD=$'\033[1m'
         COLOR_RESET=$'\033[0m'
     fi

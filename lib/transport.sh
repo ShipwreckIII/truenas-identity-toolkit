@@ -95,6 +95,7 @@ transport_midclt() {
 
     log_debug "Remote: $remote_cmd"
 
+    # shellcheck disable=SC2029
     if ! out="$(ssh "${TRANSPORT_SSH_OPTS[@]}" "${TRANSPORT_USER}@${TRANSPORT_HOST}" "$remote_cmd" 2>&1)"; then
         rc=$?
         die "midclt call '${method}' failed on $(transport_target): $out" "$EXIT_GENERAL_ERROR"
@@ -124,6 +125,7 @@ transport_midclt_soft() {
     fi
 
     log_debug "Remote (soft): $remote_cmd"
+    # shellcheck disable=SC2029
     out="$(ssh "${TRANSPORT_SSH_OPTS[@]}" "${TRANSPORT_USER}@${TRANSPORT_HOST}" "$remote_cmd" 2>&1)" || rc=$?
     echo "$out"
     return "$rc"
@@ -134,6 +136,7 @@ transport_midclt_soft() {
 # Arguments: command_string. Returns: remote command's exit code.
 transport_exec() {
     local remote_cmd="$1"
+    # shellcheck disable=SC2029
     ssh "${TRANSPORT_SSH_OPTS[@]}" "${TRANSPORT_USER}@${TRANSPORT_HOST}" "$remote_cmd"
 }
 
@@ -141,5 +144,6 @@ transport_exec() {
 # Arguments: command_string. Returns: remote command's exit code.
 transport_exec_out() {
     local remote_cmd="$1"
+    # shellcheck disable=SC2029
     ssh "${TRANSPORT_SSH_OPTS[@]}" "${TRANSPORT_USER}@${TRANSPORT_HOST}" "$remote_cmd"
 }

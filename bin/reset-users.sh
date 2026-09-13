@@ -88,8 +88,17 @@ parse_args() {
             --delete-primary-groups) DELETE_PRIMARY_GROUPS=1; shift ;;
             --production-hosts) PRODUCTION_HOSTS_REGEX="${2:?--production-hosts requires a value}"; shift 2 ;;
             --dry-run) DRY_RUN=1; shift ;;
-            --yes) ASSUME_YES=1; shift ;;
-            --no-color) NO_COLOR=1; init_colors; shift ;;
+            --yes)
+                # shellcheck disable=SC2034 # read by lib/common.sh, not here
+                ASSUME_YES=1
+                shift
+                ;;
+            --no-color)
+                # shellcheck disable=SC2034 # read by lib/common.sh, not here
+                NO_COLOR=1
+                init_colors
+                shift
+                ;;
             -h|--help) usage; exit "$EXIT_OK" ;;
             -v|--version) print_version "$PROG_NAME" ;;
             *) log_error "Unknown argument: $1"; usage; exit "$EXIT_INVALID_ARGS" ;;

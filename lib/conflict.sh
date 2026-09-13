@@ -92,5 +92,6 @@ conflict_resolve() {
         log_info "Remembering '$action' for all remaining conflicts this run."
     fi
 
+    # shellcheck disable=SC2034
     CONFLICT_RESULT_ACTION="$action"
 }

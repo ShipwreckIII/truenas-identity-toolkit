@@ -155,8 +155,17 @@ parse_args() {
             --output-dir) OUTPUT_DIR="${2:?--output-dir requires a value}"; shift 2 ;;
             --dry-run) DRY_RUN=1; shift ;;
             --yes-to-all-conflicts) YES_TO_ALL_CONFLICTS="${2:?--yes-to-all-conflicts requires a value}"; shift 2 ;;
-            --yes) ASSUME_YES=1; shift ;;
-            --no-color) NO_COLOR=1; init_colors; shift ;;
+            --yes)
+                # shellcheck disable=SC2034 # read by lib/common.sh, not here
+                ASSUME_YES=1
+                shift
+                ;;
+            --no-color)
+                # shellcheck disable=SC2034 # read by lib/common.sh, not here
+                NO_COLOR=1
+                init_colors
+                shift
+                ;;
             -h|--help) usage; exit "$EXIT_OK" ;;
             -v|--version) print_version "$PROG_NAME" ;;
             *) log_error "Unknown argument: $1"; usage; exit "$EXIT_INVALID_ARGS" ;;
@@ -200,7 +209,10 @@ load_backup() {
     BACKUP_JSON="$(cat "$path")"
     BACKUP_SOURCE="$(schema_source "$path")"
     BACKUP_CONTAINS_HASHES="$(schema_contains_hashes "$path")"
-    log_success "Loaded backup: $(echo "$BACKUP_JSON" | jq '.users | length') user(s), $(echo "$BACKUP_JSON" | jq '.groups | length') group(s) [source=$BACKUP_SOURCE]"
+    log_success "Loaded backup: $(echo "$BACKUP_JSON" | jq '.users | length') user(s), $(echo "$BACKUP_JSON" | jq '.groups | length') group(s) [source=$BACKUP_SOURCE, contains_hashes=$BACKUP_CONTAINS_HASHES]"
+    if [[ "$BACKUP_CONTAINS_HASHES" == "true" ]]; then
+        log_info "This backup carries password hashes, but no supported midclt method exists to restore them directly (see docs/ARCHITECTURE.md). Every new account will go through the interactive password prompt instead."
+    fi
 }
 
 TARGET_USERS_JSON="[]"
@@ -470,7 +482,7 @@ restore_users() {
     local count idx
     count="$(echo "$BACKUP_JSON" | jq '.users | length')"
     for ((idx = 0; idx < count; idx++)); do
-        local user username uid home shell locked password_disabled smb
+        local user username uid home shell locked smb
         local sudo_cmds sudo_cmds_np sshpubkey group_name aux_gids full_name email
         user="$(echo "$BACKUP_JSON" | jq -c ".users[$idx]")"
         username="$(echo "$user" | jq -r '.username')"

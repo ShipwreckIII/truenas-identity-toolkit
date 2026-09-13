@@ -104,7 +104,11 @@ policy_resolve_home() {
                     POLICY_RESULT_HOME=""
                     POLICY_RESULT_HOME_CREATE="false"
                 else
+                    # Read by restore.sh after this function returns, not
+                    # within this file - hence the lint suppressions below.
+                    # shellcheck disable=SC2034
                     POLICY_RESULT_HOME="$reply"
+                    # shellcheck disable=SC2034
                     POLICY_RESULT_HOME_CREATE="true"
                 fi
             fi
