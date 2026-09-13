@@ -1,0 +1,14 @@
+# shellcheck configuration for truenas-identity-toolkit
+#
+# Every script targets bash explicitly (not POSIX sh).
+shell=bash
+
+# SC1091: "Not following: <file> was not specified as input" - lib/*.sh
+# files are sourced via a dynamically computed path
+# ($SCRIPT_DIR/../lib/xxx.sh), which shellcheck cannot resolve on its own
+# from a single-file invocation. Each source line already carries a
+# `# shellcheck source=lib/xxx.sh` directive with the real relative path;
+# run shellcheck from the repo root (or with -x) to have it actually
+# follow them. This is disabled globally so ad hoc single-file runs don't
+# drown in false positives.
+disable=SC1091

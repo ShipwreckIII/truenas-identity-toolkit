@@ -1,0 +1,22 @@
+# Backup output (JSON, HTML/Markdown reports) - may contain sensitive data
+backups/
+
+# Restore and reset logs
+restore-logs/
+*.log
+
+# Raw TrueNAS config backups and SQLite databases - never commit real ones
+*.db
+*.tar
+
+# Local restore policy config - copy examples/restore.conf.example instead
+restore.conf
+!examples/restore.conf.example
+
+# JSON backup files anywhere under a backups/ tree
+backups/**/*.json
+
+# OS/editor cruft
+.DS_Store
+Thumbs.db
+*.swp
