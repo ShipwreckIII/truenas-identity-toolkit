@@ -1,2 +1,14 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# This is a Bash toolkit that runs on Linux (TrueNAS SCALE) and macOS.
+# Shell scripts, and other files that may be sourced/executed or fed to
+# tools expecting Unix line endings, must always check out with LF, even on
+# a Windows client with core.autocrlf enabled - a CRLF shebang line will not
+# execute on Linux.
+*.sh text eol=lf
+bin/* text eol=lf
+*.conf text eol=lf
+*.conf.example text eol=lf
+*.json text eol=lf
+*.tmpl text eol=lf
