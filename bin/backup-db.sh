@@ -149,7 +149,7 @@ resolve_db_file() {
 db_verify_integrity() {
     local db_path="$1"
     local result
-    result="$(sqlite3 "$db_path" "PRAGMA integrity_check;" 2>&1)" || \
+    result="$(sqlite3 "$db_path" "PRAGMA integrity_check;" 2>&1 | tr -d '\r')" || \
         die "sqlite3 could not open $db_path: $result" "$EXIT_VALIDATION_FAILURE"
 
     if [[ "$result" != "ok" ]]; then
@@ -162,7 +162,7 @@ db_verify_integrity() {
 # Echoes one table name per line.
 db_list_tables() {
     local db_path="$1"
-    sqlite3 -noheader -list "$db_path" "SELECT name FROM sqlite_master WHERE type='table';"
+    sqlite3 -noheader -list "$db_path" "SELECT name FROM sqlite_master WHERE type='table';" | tr -d '\r'
 }
 
 # db_table_columns: lists column names for a table. Arguments: db_path, table.
@@ -170,7 +170,7 @@ db_list_tables() {
 db_table_columns() {
     local db_path="$1"
     local table="$2"
-    sqlite3 -noheader -list "$db_path" "PRAGMA table_info(\"$table\");" | awk -F'|' '{print $2}'
+    sqlite3 -noheader -list "$db_path" "PRAGMA table_info(\"$table\");" | tr -d '\r' | awk -F'|' '{print $2}'
 }
 
 # has_column: checks whether a column name is present in a newline-separated
@@ -187,9 +187,14 @@ has_column() {
 find_membership_table() {
     local tables="$1"
     local candidate
-    candidate="$(printf '%s\n' "$tables" | grep -ix 'account_bsdgroupmembership' | head -n1)"
+    # Note: grep legitimately finds nothing here when there is no
+    # membership table; under `set -o pipefail` that makes the pipeline's
+    # exit status non-zero, which would otherwise trip `set -e` on this
+    # plain assignment. `|| true` makes "not found" a normal, non-fatal
+    # empty result instead of killing the script.
+    candidate="$(printf '%s\n' "$tables" | grep -ix 'account_bsdgroupmembership' | head -n1 || true)"
     if [[ -z "$candidate" ]]; then
-        candidate="$(printf '%s\n' "$tables" | grep -iE 'bsd.*group.*member|bsdusers.*bsdgroups' | head -n1)"
+        candidate="$(printf '%s\n' "$tables" | grep -iE 'bsd.*group.*member|bsdusers.*bsdgroups' | head -n1 || true)"
     fi
     echo "$candidate"
 }
@@ -215,8 +220,8 @@ introspect_schema() {
     if ! printf '%s\n' "$tables" | grep -qxi 'account_bsdgroups'; then
         die "This does not appear to be a TrueNAS SCALE config backup (table 'account_bsdgroups' not found)." "$EXIT_VALIDATION_FAILURE"
     fi
-    USERS_TABLE="$(printf '%s\n' "$tables" | grep -ix 'account_bsdusers' | head -n1)"
-    GROUPS_TABLE="$(printf '%s\n' "$tables" | grep -ix 'account_bsdgroups' | head -n1)"
+    USERS_TABLE="$(printf '%s\n' "$tables" | grep -ix 'account_bsdusers' | head -n1 || true)"
+    GROUPS_TABLE="$(printf '%s\n' "$tables" | grep -ix 'account_bsdgroups' | head -n1 || true)"
     MEMBERSHIP_TABLE="$(find_membership_table "$tables")"
 
     if [[ -n "$MEMBERSHIP_TABLE" ]]; then
